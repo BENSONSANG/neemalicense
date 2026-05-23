@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neema – NEMA License Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --green-deep:  #1a4731;
+      --green-mid:   #2e7d50;
+      --green-light: #4caf78;
+      --gold:        #c8a951;
+      --gold-light:  #e8ca7a;
+      --cream:       #faf8f3;
+      --text-dark:   #1c2b1e;
+      --text-muted:  #6b7c6d;
+      --border:      #d4e4d8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      background-image:
+        radial-gradient(ellipse at 10% 10%, rgba(46,125,80,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 90% 90%, rgba(200,169,81,0.07) 0%, transparent 60%);
+    }
+
+    /* ── Top nav bar ───────────────────────────────── */
+    .topbar {
+      width: 100%; max-width: 560px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .topbar .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--green-deep);
+      letter-spacing: -0.5px;
+    }
+    .topbar .brand span { color: var(--gold); }
+    .topbar .tagline { font-size: 11px; color: var(--text-muted); }
+
+    /* ── Certificate card ──────────────────────────── */
+    .certificate {
+      background: #fff;
+      border-radius: 20px;
+      max-width: 560px; width: 100%;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 12px 40px rgba(26,71,49,0.10),
+        0 0 0 1px var(--border);
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header band ───────────────────────────────── */
+    .cert-header {
+      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+      padding: 28px 36px 24px;
+      display: flex; align-items: center; gap: 16px;
+      position: relative; overflow: hidden;
+    }
+    .cert-header::after {
+      content: ''; position: absolute;
+      right: -40px; top: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .nema-emblem {
+      width: 54px; height: 54px;
+      background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      font-family: 'Playfair Display', serif;
+      font-size: 13px; font-weight: 700;
+      color: var(--green-deep);
+    }
+    .header-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700; color: #fff; line-height: 1.2;
+    }
+    .header-text p {
+      font-size: 12px; color: rgba(255,255,255,0.65);
+      margin-top: 3px; letter-spacing: 0.5px;
+    }
+
+    /* ── Gold ribbon ───────────────────────────────── */
+    .verified-ribbon {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      text-align: center; padding: 8px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; color: var(--green-deep); text-transform: uppercase;
+    }
+
+    /* ── Body ──────────────────────────────────────── */
+    .cert-body { padding: 32px 36px; }
+    .org-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--green-deep);
+      margin-bottom: 24px; padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Details grid ──────────────────────────────── */
+    .details {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 28px;
+    }
+    .detail-item {
+      background: #f7faf8; border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px;
+    }
+    .detail-item.full { grid-column: 1 / -1; }
+    .detail-label {
+      font-size: 10px; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 4px; font-weight: 500;
+    }
+    .detail-value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #e8f7ee; color: #1a6635;
+      font-size: 13px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid #b6dfc4;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      background: var(--green-light); border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    /* ── QR section ────────────────────────────────── */
+    .qr-section {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex; gap: 20px; align-items: center;
+    }
+    .qr-wrapper {
+      background: white; border: 2px solid var(--border);
+      border-radius: 12px; padding: 10px; flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+    .qr-wrapper:hover { border-color: var(--green-light); }
+    .qr-info h3 { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; }
+    .qr-info p  { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+    .verify-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green-deep); color: white;
+      font-size: 13px; font-weight: 500;
+      padding: 10px 18px; border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .verify-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+    .verify-btn svg { width: 14px; height: 14px; }
+
+    /* ── Footer ────────────────────────────────────── */
+    .cert-footer {
+      background: #f7faf8; border-top: 1px solid var(--border);
+      padding: 14px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cert-footer p { font-size: 11px; color: var(--text-muted); }
+    .cert-footer a { color: var(--green-mid); text-decoration: none; font-weight: 500; }
+
+    /* ── Page footer ───────────────────────────────── */
+    .page-footer {
+      margin-top: 20px;
+      font-size: 11px; color: var(--text-muted); text-align: center;
+    }
+    .page-footer a { color: var(--green-mid); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Top brand bar -->
+  <div class="topbar">
+    <div class="brand">nee<span>ma</span>.com</div>
+    <div class="tagline">Environmental Compliance Portal</div>
+  </div>
+
+  <!-- Certificate card -->
+  <div class="certificate">
+
+    <!-- Header -->
+    <div class="cert-header">
+      <div class="nema-emblem">NEMA</div>
+      <div class="header-text">
+        <h1>Environmental License Certificate</h1>
+        <p>National Environment Management Authority · Kenya</p>
+      </div>
+    </div>
+
+    <!-- Gold ribbon -->
+    <div class="verified-ribbon">★ &nbsp; Verified License &nbsp; ★</div>
+
+    <!-- Body -->
+    <div class="cert-body">
+      <div class="org-name">The Salvation Army Kenya</div>
+
+      <div class="details">
+        <div class="detail-item">
+          <div class="detail-label">Registration Status</div>
+          <div class="detail-value">
+            <span class="status-badge">
+              <span class="status-dot"></span> Active
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Issuing Authority</div>
+          <div class="detail-value">NEMA Kenya</div>
+        </div>
+
+        <div class="detail-item full">
+          <div class="detail-label">License Number</div>
+          <div class="detail-value">NEMA/ENVIS/CPR/LIC-0106</div>
+        </div>
+
+        <div class="detail-item full">
+          <div class="detail-label">Product / Report Type</div>
+          <div class="detail-value">Comprehensive Project Report</div>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-section">
+        <div class="qr-wrapper">
+          <div id="qr-code"></div>
+        </div>
+        <div class="qr-info">
+          <h3>Verify on Official NEMA Portal</h3>
+          <p>Scan this QR code or click the button below to verify this license directly on the official NEMA Kenya licensing portal.</p>
+          <a class="verify-btn"
+             href="https://licensing.nema.go.ke/verifylicense?product=NEMA%2FENVIS%2FCPR%2FLIC-0106"
+             target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Verify on NEMA
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card footer -->
+    <div class="cert-footer">
+      <p>Source: <a href="https://licensing.nema.go.ke" target="_blank">licensing.nema.go.ke</a></p>
+      <p>Hosted by <strong>neema.com</strong></p>
+    </div>
+  </div>
+
+  <!-- Page footer -->
+  <div class="page-footer">
+    neema.com &nbsp;·&nbsp; Powered by <a href="https://licensing.nema.go.ke" target="_blank">NEMA Kenya Official Data</a>
+  </div>
+
+  <script>
+    // Generate QR code pointing to official NEMA verification URL
+    new QRCode(document.getElementById("qr-code"), {
+      text: "https://licensing.nema.go.ke/verifylicense?product=NEMA%2FENVIS%2FCPR%2FLIC-0106",
+      width: 130,
+      height: 130,
+      colorDark: "#1a4731",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>
