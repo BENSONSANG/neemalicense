@@ -4,269 +4,427 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neema – NEMA License Verification</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    :root {
-      --green-deep:  #1a4731;
-      --green-mid:   #2e7d50;
-      --green-light: #4caf78;
-      --gold:        #c8a951;
-      --gold-light:  #e8ca7a;
-      --cream:       #f7f3eb;
-      --text-dark:   #1c2b1e;
-      --text-muted:  #6b7c6d;
-      --border:      #d4e4d8;
-      --shadow:      0 24px 60px rgba(26,71,49,0.12);
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: radial-gradient(circle at top left, rgba(46,125,80,0.10) 0%, transparent 28%),
-                  radial-gradient(circle at bottom right, rgba(200,169,81,0.12) 0%, transparent 32%),
-                  linear-gradient(180deg, #f9f6f0 0%, #eef1ee 100%);
+      font-family: 'Outfit', sans-serif;
       min-height: 100vh;
+      background: linear-gradient(135deg,
+        #0f4c2a 0%,
+        #1a7a44 15%,
+        #2196f3 35%,
+        #9c27b0 55%,
+        #e91e63 70%,
+        #ff9800 85%,
+        #4caf50 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px 18px;
+      padding: 40px 20px 60px;
     }
 
-    .topbar {
-      width: 100%; max-width: 640px;
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── NAV ───────────────────────────────── */
+    nav {
+      width: 100%; max-width: 700px;
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px;
-      padding: 14px 18px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.82);
-      border: 1px solid rgba(212,228,216,0.8);
-      box-shadow: 0 16px 40px rgba(26,71,49,0.08);
-      backdrop-filter: blur(10px);
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 100px;
+      padding: 12px 24px;
     }
-    .topbar .brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px; color: var(--green-deep);
-      letter-spacing: -0.5px;
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 700;
+      color: #fff; letter-spacing: -0.5px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.2);
     }
-    .topbar .brand span { color: var(--gold); }
-    .topbar .tagline { font-size: 12px; color: var(--text-muted); }
+    .logo em { font-style: normal; color: #ffe066; }
 
-    .certificate {
-      background: rgba(255,255,255,0.96);
+    .live-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.22);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px; font-weight: 600;
+      color: #fff; letter-spacing: 0.5px;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      background: #69ff97;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #69ff97;
+      animation: blink 1.5s ease infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.75); }
+    }
+
+    /* ── CARD ──────────────────────────────── */
+    .card {
+      width: 100%; max-width: 700px;
+      background: rgba(255,255,255,0.97);
       border-radius: 28px;
-      max-width: 640px; width: 100%;
-      box-shadow: var(--shadow);
       overflow: hidden;
-      animation: fadeUp 0.65s ease both;
-      border: 1px solid rgba(212,228,216,0.9);
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow:
+        0 0 0 4px rgba(255,255,255,0.25),
+        0 32px 80px rgba(0,0,0,0.3);
+      animation: popIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
     }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes popIn {
+      from { opacity:0; transform:translateY(40px) scale(0.96); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
     }
 
-    .cert-header {
-      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
-      padding: 32px 42px 28px;
-      display: flex; align-items: center; gap: 18px;
+    /* ── RAINBOW HEADER ────────────────────── */
+    .card-header {
+      background: linear-gradient(135deg,
+        #0d47a1 0%, #1565c0 20%,
+        #00695c 35%, #2e7d32 50%,
+        #e65100 65%, #bf360c 80%,
+        #4a148c 100%);
+      padding: 36px 48px 30px;
       position: relative; overflow: hidden;
     }
-    .cert-header::before {
-      content: '';
-      position: absolute; right: -20px; top: -10px;
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      filter: blur(4px);
+    .card-header::before {
+      content:'';
+      position:absolute; inset:0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(255,255,255,0.07)' stroke-width='1'/%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") repeat;
     }
-    .nema-emblem {
-      width: 64px; height: 64px;
-      background: white; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
-      font-family: 'Playfair Display', serif;
-      font-size: 14px; font-weight: 700;
-      color: var(--green-deep);
+    .header-inner { position:relative; z-index:1; display:flex; align-items:center; gap:20px; }
+
+    .seal-ring {
+      width:72px; height:72px; flex-shrink:0;
+      border-radius:50%;
+      background: conic-gradient(#ff6b6b, #ffd93d, #6bcb77, #4d96ff, #c77dff, #ff6b6b);
+      padding:3px;
+      box-shadow: 0 0 24px rgba(255,255,255,0.3);
+      animation: rotateSeal 8s linear infinite;
     }
+    @keyframes rotateSeal {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .seal-inner {
+      width:100%; height:100%;
+      background: #0d2e1a;
+      border-radius:50%;
+      display:grid; place-items:center;
+      font-family:'Cormorant Garamond',serif;
+      font-size:14px; font-weight:700;
+      color:#ffe066; letter-spacing:1px;
+    }
+
     .header-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px; font-weight: 700; color: #fff; line-height: 1.15;
-      max-width: 420px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:28px; font-weight:700;
+      color:#fff; line-height:1.2; margin-bottom:6px;
     }
-    .header-text p {
-      font-size: 13px; color: rgba(255,255,255,0.75);
-      margin-top: 6px; letter-spacing: 0.4px;
+    .header-text p { font-size:13px; color:rgba(255,255,255,0.7); }
+
+    /* ── RAINBOW BAR ───────────────────────── */
+    .rainbow-bar {
+      height:6px;
+      background: linear-gradient(90deg,
+        #ff0000, #ff7700, #ffff00,
+        #00ff00, #0000ff, #8b00ff, #ff0000);
+      background-size: 200%;
+      animation: rainbowScroll 3s linear infinite;
+    }
+    @keyframes rainbowScroll {
+      from { background-position: 0%; }
+      to   { background-position: 200%; }
     }
 
-    .verified-ribbon {
-      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 60%, var(--gold) 100%);
-      text-align: center;
-      padding: 10px 0;
-      font-size: 12px; font-weight: 700;
-      letter-spacing: 3px; color: var(--green-deep); text-transform: uppercase;
-      box-shadow: 0 8px 18px rgba(214,172,81,0.14);
+    /* ── VERIFIED BANNER ───────────────────── */
+    .verified-banner {
+      background: linear-gradient(90deg, #1b5e20, #2e7d32, #388e3c, #43a047, #388e3c, #2e7d32, #1b5e20);
+      background-size:200%;
+      animation: bannerShift 4s linear infinite;
+      text-align:center; padding:12px;
+      display:flex; align-items:center; justify-content:center; gap:14px;
     }
+    @keyframes bannerShift {
+      from { background-position:0%; }
+      to   { background-position:200%; }
+    }
+    .verified-badge {
+      background: #fff;
+      color: #1b5e20;
+      font-size:11px; font-weight:700;
+      letter-spacing:2.5px; text-transform:uppercase;
+      padding:6px 18px; border-radius:100px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .star { color:#ffd700; font-size:16px; }
 
-    .cert-body { padding: 36px 42px; }
+    /* ── BODY ──────────────────────────────── */
+    .card-body { padding: 40px 48px; }
+
+    .org-block {
+      margin-bottom: 30px; padding-bottom: 28px;
+      border-bottom: 2px dashed #e8f5e9;
+    }
+    .org-eyebrow {
+      font-size:11px; font-weight:700;
+      letter-spacing:2.5px; text-transform:uppercase;
+      background: linear-gradient(90deg, #2196f3, #9c27b0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom:8px;
+    }
     .org-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px; color: var(--green-deep);
-      margin-bottom: 26px; padding-bottom: 18px;
-      border-bottom: 1px solid rgba(212,228,216,0.85);
+      font-family:'Cormorant Garamond',serif;
+      font-size:34px; font-weight:700;
+      background: linear-gradient(135deg, #0d47a1, #00695c, #e65100);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height:1.1;
     }
 
-    .details {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px; margin-bottom: 32px;
+    /* ── FIELD GRID ────────────────────────── */
+    .fields {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:16px; margin-bottom:32px;
     }
-    .detail-item {
-      background: linear-gradient(180deg, #fcfcfb 0%, #f5f9f6 100%);
-      border: 1px solid rgba(212,228,216,0.9);
-      border-radius: 16px; padding: 18px 16px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9);
+    .field {
+      border-radius:16px; padding:18px 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
     }
-    .detail-item.full { grid-column: 1 / -1; }
-    .detail-label {
-      font-size: 11px; letter-spacing: 1.4px;
-      text-transform: uppercase; color: var(--text-muted);
-      margin-bottom: 8px; font-weight: 600;
+    .field:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(0,0,0,0.1); }
+    .field.wide { grid-column:1/-1; }
+
+    .field-1 { background:linear-gradient(135deg,#e3f2fd,#bbdefb); border:1px solid #90caf9; }
+    .field-2 { background:linear-gradient(135deg,#f3e5f5,#e1bee7); border:1px solid #ce93d8; }
+    .field-3 { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border:1px solid #a5d6a7; }
+    .field-4 { background:linear-gradient(135deg,#fff8e1,#ffecb3); border:1px solid #ffe082; }
+
+    .field-label {
+      font-size:10px; font-weight:700;
+      letter-spacing:1.8px; text-transform:uppercase;
+      margin-bottom:8px;
     }
-    .detail-value {
-      font-size: 15px; font-weight: 700; color: var(--text-dark);
-      line-height: 1.5;
+    .f1-label { color:#0d47a1; }
+    .f2-label { color:#6a1b9a; }
+    .f3-label { color:#1b5e20; }
+    .f4-label { color:#e65100; }
+
+    .field-value { font-size:15px; font-weight:600; color:#1a1a2e; line-height:1.4; }
+    .field-3 .field-value { font-family:monospace; font-size:14px; letter-spacing:0.5px; color:#1b5e20; }
+
+    .status-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      background:linear-gradient(135deg,#00c853,#69f0ae);
+      color:#003300;
+      font-size:13px; font-weight:700;
+      padding:8px 18px; border-radius:100px;
+      box-shadow:0 4px 16px rgba(0,200,83,0.3);
     }
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #e8f7ee; color: #1a6635;
-      font-size: 13px; font-weight: 700;
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid #b6dfc4;
-      letter-spacing: 0.3px;
-    }
-    .status-dot {
-      width: 8px; height: 8px;
-      background: var(--green-light); border-radius: 50%;
-      animation: pulse 2s ease infinite;
+    .pulse-dot {
+      width:8px; height:8px;
+      background:#fff; border-radius:50%;
+      animation:blink 1.5s ease infinite;
     }
 
-    .qr-section {
-      border-top: 1px solid rgba(212,228,216,0.85);
-      padding-top: 28px;
-      display: flex; gap: 24px; align-items: flex-start;
-      flex-wrap: wrap;
+    /* ── QR ZONE ───────────────────────────── */
+    .qr-zone {
+      border-radius:20px; padding:28px;
+      background:linear-gradient(135deg,
+        rgba(33,150,243,0.08) 0%,
+        rgba(156,39,176,0.08) 50%,
+        rgba(255,152,0,0.08) 100%);
+      border:2px solid transparent;
+      background-clip: padding-box;
+      position:relative;
+      display:flex; gap:28px; align-items:center; flex-wrap:wrap;
     }
-    .qr-wrapper {
-      background: white; border: 2px solid rgba(212,228,216,0.9);
-      border-radius: 20px; padding: 16px; flex-shrink: 0;
-      transition: border-color 0.25s ease, transform 0.25s ease;
+    .qr-zone::before {
+      content:'';
+      position:absolute; inset:-2px;
+      border-radius:22px;
+      background:linear-gradient(135deg,#2196f3,#9c27b0,#ff9800,#4caf50);
+      z-index:-1;
     }
-    .qr-wrapper:hover { border-color: var(--green-light); transform: translateY(-2px); }
-    .qr-info { max-width: 430px; }
-    .qr-info h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
-    .qr-info p  { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+
+    .qr-frame {
+      flex-shrink:0;
+      background:white;
+      border-radius:16px; padding:14px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.12);
+      transition:transform 0.25s;
+    }
+    .qr-frame:hover { transform:scale(1.05) rotate(1deg); }
+
+    .qr-info { flex:1; min-width:180px; }
+    .qr-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:22px; font-weight:700;
+      background:linear-gradient(135deg,#0d47a1,#6a1b9a);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      margin-bottom:8px;
+    }
+    .qr-desc {
+      font-size:13px; color:#546e7a;
+      line-height:1.7; margin-bottom:18px;
+    }
+
     .verify-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
-      color: white;
-      font-size: 13px; font-weight: 600;
-      padding: 12px 20px; border-radius: 14px;
-      text-decoration: none;
-      transition: background 0.25s ease, transform 0.2s ease;
-      box-shadow: 0 12px 24px rgba(46,125,80,0.12);
+      display:inline-flex; align-items:center; gap:10px;
+      background:linear-gradient(135deg,#1565c0,#6a1b9a,#ad1457);
+      background-size:200%;
+      animation:btnShift 4s ease infinite;
+      color:white;
+      font-family:'Outfit',sans-serif;
+      font-size:13px; font-weight:700;
+      padding:14px 24px; border-radius:14px;
+      text-decoration:none; letter-spacing:0.3px;
+      box-shadow:0 8px 24px rgba(106,27,154,0.3);
+      transition:transform 0.2s, box-shadow 0.2s;
     }
-    .verify-btn:hover { background: linear-gradient(135deg, var(--green-mid), var(--green-light)); transform: translateY(-2px); }
-    .verify-btn svg { width: 16px; height: 16px; }
-
-    .cert-footer {
-      background: rgba(247,250,248,0.95);
-      border-top: 1px solid rgba(212,228,216,0.95);
-      padding: 18px 42px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+    @keyframes btnShift {
+      0%,100% { background-position:0%; }
+      50%      { background-position:100%; }
     }
-    .cert-footer p { font-size: 12px; color: var(--text-muted); }
-    .cert-footer a { color: var(--green-mid); text-decoration: none; font-weight: 600; }
+    .verify-btn:hover {
+      transform:translateY(-3px) scale(1.02);
+      box-shadow:0 16px 40px rgba(106,27,154,0.4);
+    }
+    .verify-btn svg { width:15px; height:15px; }
 
+    .url-tag {
+      margin-top:12px;
+      display:inline-block;
+      background:#f1f8e9;
+      border:1px solid #aed581;
+      border-radius:8px;
+      padding:5px 12px;
+      font-size:11px; font-family:monospace;
+      color:#33691e;
+    }
+
+    /* ── FOOTER ────────────────────────────── */
+    .card-footer {
+      border-top:3px solid transparent;
+      background:linear-gradient(white,white) padding-box,
+                 linear-gradient(90deg,#2196f3,#9c27b0,#ff9800) border-box;
+      padding:18px 48px;
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:10px;
+      background-color:#f9fffe;
+    }
+    .footer-meta { font-size:12px; color:#78909c; }
+    .footer-meta a { color:#0288d1; font-weight:600; text-decoration:none; }
+    .footer-brand {
+      font-family:'Cormorant Garamond',serif;
+      font-size:16px; font-weight:700;
+      background:linear-gradient(135deg,#2196f3,#9c27b0,#ff9800);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+
+    /* ── PAGE FOOTER ───────────────────────── */
     .page-footer {
-      margin-top: 24px;
-      font-size: 12px; color: var(--text-muted); text-align: center;
+      margin-top:24px;
+      font-size:12px; color:rgba(255,255,255,0.8);
+      text-align:center;
     }
-    .page-footer a { color: var(--green-mid); text-decoration: none; }
+    .page-footer a { color:#ffe066; text-decoration:none; font-weight:600; }
 
-    @media (max-width: 680px) {
-      .topbar { flex-direction: column; align-items: flex-start; }
-      .cert-header { flex-direction: column; align-items: flex-start; }
-      .details { grid-template-columns: 1fr; }
-      .qr-section { flex-direction: column; }
-      .cert-footer { justify-content: center; text-align: center; }
+    @media (max-width:560px) {
+      .card-header,.card-body,.card-footer { padding-left:24px; padding-right:24px; }
+      .fields { grid-template-columns:1fr; }
+      .field.wide { grid-column:1; }
+      .qr-zone { flex-direction:column; }
+      nav { border-radius:20px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top brand bar -->
-  <div class="topbar">
-    <div class="brand">nee<span>ma</span>.com</div>
-    <div class="tagline">Environmental Compliance Portal</div>
-  </div>
+  <nav>
+    <div class="logo">nee<em>ma</em>.com</div>
+    <div class="live-pill"><span class="live-dot"></span> Live &amp; Verified</div>
+  </nav>
 
-  <!-- Certificate card -->
-  <div class="certificate">
+  <div class="card">
 
     <!-- Header -->
-    <div class="cert-header">
-      <div class="nema-emblem">NEMA</div>
-      <div class="header-text">
-        <h1>Environmental License Certificate</h1>
-        <p>National Environment Management Authority · Kenya</p>
+    <div class="card-header">
+      <div class="header-inner">
+        <div class="seal-ring">
+          <div class="seal-inner">NEMA</div>
+        </div>
+        <div class="header-text">
+          <h1>Environmental License Certificate</h1>
+          <p>National Environment Management Authority &nbsp;·&nbsp; Republic of Kenya</p>
+        </div>
       </div>
     </div>
 
-    <!-- Gold ribbon -->
-    <div class="verified-ribbon">★ &nbsp; Verified License &nbsp; ★</div>
+    <!-- Rainbow bar -->
+    <div class="rainbow-bar"></div>
+
+    <!-- Verified banner -->
+    <div class="verified-banner">
+      <span class="star">★</span>
+      <span class="verified-badge">✔ &nbsp; Verified &amp; Active License</span>
+      <span class="star">★</span>
+    </div>
 
     <!-- Body -->
-    <div class="cert-body">
-      <div class="org-name">The Salvation Army Kenya</div>
+    <div class="card-body">
 
-      <div class="details">
-        <div class="detail-item">
-          <div class="detail-label">Registration Status</div>
-          <div class="detail-value">
-            <span class="status-badge">
-              <span class="status-dot"></span> Active
-            </span>
+      <div class="org-block">
+        <div class="org-eyebrow">License Holder</div>
+        <div class="org-name">The Salvation Army Kenya</div>
+      </div>
+
+      <div class="fields">
+        <div class="field field-1">
+          <div class="field-label f1-label">Registration Status</div>
+          <div class="field-value">
+            <span class="status-pill"><span class="pulse-dot"></span>Active</span>
           </div>
         </div>
 
-        <div class="detail-item">
-          <div class="detail-label">Issuing Authority</div>
-          <div class="detail-value">NEMA Kenya</div>
+        <div class="field field-2">
+          <div class="field-label f2-label">Issuing Authority</div>
+          <div class="field-value">NEMA Kenya</div>
         </div>
 
-        <div class="detail-item full">
-          <div class="detail-label">License Number</div>
-          <div class="detail-value">NEMA/ENVIS/CPR/LIC-0106</div>
+        <div class="field field-3 wide">
+          <div class="field-label f3-label">License Number</div>
+          <div class="field-value">NEMA/ENVIS/CPR/LIC-0106</div>
         </div>
 
-        <div class="detail-item full">
-          <div class="detail-label">Product / Report Type</div>
-          <div class="detail-value">Comprehensive Project Report</div>
+        <div class="field field-4 wide">
+          <div class="field-label f4-label">Product / Report Type</div>
+          <div class="field-value">Comprehensive Project Report</div>
         </div>
       </div>
 
-      <!-- QR Code -->
-      <div class="qr-section">
-        <div class="qr-wrapper">
+      <!-- QR Zone -->
+      <div class="qr-zone">
+        <div class="qr-frame">
           <div id="qr-code"></div>
         </div>
         <div class="qr-info">
-          <h3>Verify on Official NEMA Portal</h3>
-          <p>Scan this QR code or click the button below to verify this license directly on the official NEMA Kenya licensing portal.</p>
+          <div class="qr-title">Verify on Official NEMA Portal</div>
+          <div class="qr-desc">Scan the QR code or tap below to open this license record directly on the official NEMA Kenya government portal and confirm its authenticity.</div>
           <a class="verify-btn"
              href="https://licensing.nema.go.ke/verifylicense?product=NEMA%2FENVIS%2FCPR%2FLIC-0106"
              target="_blank" rel="noopener noreferrer">
@@ -277,29 +435,29 @@
             </svg>
             Verify on NEMA
           </a>
+          <div class="url-tag">🔗 licensing.nema.go.ke</div>
         </div>
       </div>
+
     </div>
 
-    <!-- Card footer -->
-    <div class="cert-footer">
-      <p>Source: <a href="https://licensing.nema.go.ke" target="_blank">licensing.nema.go.ke</a></p>
-      <p>Hosted by <strong>neema.com</strong></p>
+    <!-- Footer -->
+    <div class="card-footer">
+      <div class="footer-meta">Source: <a href="https://licensing.nema.go.ke" target="_blank">licensing.nema.go.ke</a></div>
+      <div class="footer-brand">neema.com</div>
     </div>
+
   </div>
 
-  <!-- Page footer -->
   <div class="page-footer">
     neema.com &nbsp;·&nbsp; Powered by <a href="https://licensing.nema.go.ke" target="_blank">NEMA Kenya Official Data</a>
   </div>
 
   <script>
-    // Generate QR code pointing to official NEMA verification URL
     new QRCode(document.getElementById("qr-code"), {
       text: "https://licensing.nema.go.ke/verifylicense?product=NEMA%2FENVIS%2FCPR%2FLIC-0106",
-      width: 130,
-      height: 130,
-      colorDark: "#1a4731",
+      width: 148, height: 148,
+      colorDark: "#0d47a1",
       colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.H
     });
